@@ -1,0 +1,10 @@
+#! /usr/bin/env python
+
+def get_RFC868_time_protocol_timestamp() -> int:
+    """ Returns the time in seconds since midnight on January first 1900 as a 32 bit integer.
+        Implements the Time Protocol as described in RFC860.
+        https://tools.ietf.org/html/rfc868
+    """
+    NUMBER_OF_SECONDS_FROM_JANUARY_FIRST_1900_TO_BEGINNING_OF_UNIX_EPOCH: int = 2_208_988_800
+    time_since_beginning_of_unix_epoch: int = int(time.time())
+    return NUMBER_OF_SECONDS_FROM_JANUARY_FIRST_1900_TO_BEGINNING_OF_UNIX_EPOCH + time_since_beginning_of_unix_epoch
