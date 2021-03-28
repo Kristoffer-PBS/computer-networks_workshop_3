@@ -39,7 +39,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
     sock.bind((HOST, PORT))
 
     while True: # server loop
-        _, addr = sock.recvfrom(32)
+        _, addr = sock.recvfrom(8)
         print(f"got an empty datagram from: {addr}")
         tp_timestamp: int = get_RFC868_time_protocol_timestamp()
         sock.sendto(bytes(str(tp_timestamp), "utf-8"), addr)
