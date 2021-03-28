@@ -1,4 +1,8 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
+
+import socket
+import time
+import argparse
 
 def get_RFC868_time_protocol_timestamp() -> int:
     """ Returns the time in seconds since midnight on January first 1900 as a 32 bit integer.
@@ -8,3 +12,34 @@ def get_RFC868_time_protocol_timestamp() -> int:
     NUMBER_OF_SECONDS_FROM_JANUARY_FIRST_1900_TO_BEGINNING_OF_UNIX_EPOCH: int = 2_208_988_800
     time_since_beginning_of_unix_epoch: int = int(time.time())
     return NUMBER_OF_SECONDS_FROM_JANUARY_FIRST_1900_TO_BEGINNING_OF_UNIX_EPOCH + time_since_beginning_of_unix_epoch
+
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "-p",
+    "--port",
+    type=int,
+    default=7890,
+    help= "server port number"
+)
+
+args = parser.parse_args()
+
+HOST: str = "127.0.0.1"
+PORT: int = args.port
+
+print(f"HOST: {HOST}, PORT: {PORT}")
+print(f"time is {get_RFC868_time_protocol_timestamp()}")
+
+
+# # create a BSD socket, which uses UDP/IP for communication
+# sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.getprotobyname('udp'))
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+    sock.bind((HOST, PORT))
+
+    while True: # server loop
+        _, addr = sock.recvfrom(32)
+        print(f"got an empty datagram from: {addr}")
+        tp_timestamp: int = get_RFC868_time_protocol_timestamp()
+        sock.sendto(bytes(str(tp_timestamp), "utf-8"), addr)
