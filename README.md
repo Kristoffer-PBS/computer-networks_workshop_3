@@ -5,6 +5,9 @@
 
 ### Introduction
 
+Link to git repository containing source code [computer_networks_workshop_3](https://github.com/Kristoffer-PBS/computer-networks_workshop_3)
+
+
 This short document is made for [Workshop 3](https://github.com/rhjacobsen/CN_workshops/tree/master/Workshops/3) in Computernetworking. The workshop is about implementing a client and a server for the Time Protocol specified in [RFC 868](https://tools.ietf.org/html/rfc868).
 
 The optional part of the workshop has not been made.
