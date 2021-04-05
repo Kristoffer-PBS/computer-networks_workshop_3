@@ -21,23 +21,45 @@ The four python scrips have an added "shebang" `#! /usr/bin/env python3` at the 
 
 ### Implementation
 
-TODO: Lav drawio af figur fra koden og sæt ind her (både en for TCP og UDP)
-
 <!-- A short overall description of how the implementation has been structured -->
 
 <!-- A description of how the socket API is used in the implementation. -->
 
+
+#### Sequence diagram of TCP implementation
+
 ![tcp](diagrams/interaction_sequence_diagram_TCP.png)
 
+#### Sequence diagram of UDP implementation
 
+![udp](diagrams/interaction_sequence_diagram_UDP.png)
 
-### Ny overskrift
+In both versions the socket API is used to create an object at the application level to facilitate
+network communication. The actual communication is handled by the operating system, and the sockets are an abstraction used for bidirectional communication.
 
 <!-- A description of how it has been ensured that the implementation conforms to the protocol standard as described in RFC 868, including a documentation of the conformance testing described in the previous section.
 i.e. "Use Wireshark to identify the exchange of timestamps between the server and the client. Is the payload size in the packet 32 bit (4 bytes) as specified in RFC 868?"-->
 
-### Ny overskrift
+Our implementation does not fully conform to the protocol specifed in [RFC 868](https://tools.ietf.org/html/rfc868). In the RFC port 37 is specified, but we have made the port configurable such that port numbers higher than 1023 freely can be used. This is to ensure that anyone testing the program will not face any issue with using a permission restricted port number. 
 
-<!-- A description of problems encountered, assumptions and simplifications made (if applicable). -->
+Second the RFC specify that the size of the payload i.e. the timestamp should be 32 bits/4 bytes. We have used Wireshark to capture packets sent between the client and server application to verify this. A screenshot of the TCP- and UDP packets respectively are shown below. For both of them the payload size is 4 bytes as the protocol requires.
 
+![TCP_packet](screenshots/TCP_packet.png)
+![UDP_timestamp](screenshots/UDP_timestamp_packet.png)
+
+Third in the UDP implementation the client signals a request by sending an empty UDP datagram. The Wireshark capture of this is shown below:
+
+![UDP_empty_datagram](screenshots/UDP_empty_datagram.png)
+
+Regarding how the timestamp is calculated we have used the unix epoch time, and a known time offset between
+midnight January 1 1900 and midnight January 1 1970, where the Unix Epoch begins. Knowing this the time since midnight January 1 1900 and today, can be calculated as the sum of the time offset and the current unix epoch time. 
+
+```python
+    import time # the time method of the time module return the unix epoch time
+    time_offset = 2_208_988_800
+    UDP_868_timstamp = time_offset + time.time()
+```
+
+Using this mehtod to calculate the time is a bit of a simplification, as in the unix epoch time 
+specification every day has 86400 seconds. This means that leap years and leap seconds has not been taken into account, and therefore it is not strictly the correct real world time but only a very close approximation. This is in most cases not an issue, as the use of unix epoch time is widespread and accepted as standard in many applications.
 
