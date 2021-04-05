@@ -27,6 +27,7 @@ TODO: Lav drawio af figur fra koden og sæt ind her (både en for TCP og UDP)
 
 <!-- A description of how the socket API is used in the implementation. -->
 
+![tcp](diagrams/interaction_sequence_diagram_TCP.png)
 
 
 
