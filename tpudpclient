@@ -30,4 +30,4 @@ print(f"HOST: {HOST}, PORT: {PORT}")
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
     sock.sendto(bytes("", "utf-8"), (HOST, PORT))
     data, _ = sock.recvfrom(32)
-    print("timestamp returned: {}".format(data.decode("utf-8")))
+    print("timestamp returned: {}".format(int.from_bytes(data, "little")))

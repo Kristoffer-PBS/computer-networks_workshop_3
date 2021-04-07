@@ -90,4 +90,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         with connection:
             print(f"got a connection request from: {addr}")
             tp_timestamp: int = get_RFC868_time_protocol_timestamp()
-            connection.send(bytes(str(tp_timestamp), "utf-8"))
+            connection.send(tp_timestamp.to_bytes(4, "little"))
