@@ -1,12 +1,14 @@
+---
+tags: "Computer Network"
+---
+
+
 # Workshop 3 - Assignment: Time Protocol with Network Sockets
 
 ### Kristoffer Plagborg Bak Sørensen, 201908140
 ### Pernille Sonne Pallesen, 201909457
 
 ### Introduction
-
-Link to git repository containing source code [computer_networks_workshop_3](https://github.com/Kristoffer-PBS/computer-networks_workshop_3)
-
 
 This short document is made for [Workshop 3](https://github.com/rhjacobsen/CN_workshops/tree/master/Workshops/3) in Computernetworking. The workshop is about implementing a client and a server for the Time Protocol specified in [RFC 868](https://tools.ietf.org/html/rfc868).
 
@@ -65,4 +67,73 @@ midnight January 1 1900 and midnight January 1 1970, where the Unix Epoch begins
 
 Using this mehtod to calculate the time is a bit of a simplification, as in the unix epoch time 
 specification every day has 86400 seconds. This means that leap years and leap seconds has not been taken into account, and therefore it is not strictly the correct real world time but only a very close approximation. This is in most cases not an issue, as the use of unix epoch time is widespread and accepted as standard in many applications.
+
+
+
+### Interoperability Tests
+
+**First test: Jespers code**
+
+For the first test, we ran into som problems. Firstly, we use little endian for data decoding, and the group use big endian. This means that the timestamp ends up making no sense:
+
+![](https://i.imgur.com/vlVlt0m.png)
+
+Secondly, when running the groups server with our own client (for both TCP and UDP), Wireshark gives us this information "Unknown Service Family":
+
+#### TCP
+![](https://i.imgur.com/Ja8ZLkx.png)
+
+#### UDP
+![](https://i.imgur.com/0UfVl9f.png)
+
+When running our own sever with the groups client we get the same problem (for both TCP and UDP):
+
+#### TCP
+![](https://i.imgur.com/7az7x3f.png)
+
+#### UDP
+![](https://i.imgur.com/QygeVqq.png)
+
+However, in all four scenarios, we are able to see that the payload size is 4 bytes as the protocol requires.
+
+**Second test: Kevorks code**
+
+For the second test, we had the same problems in Wireshark (the "Unknown Service Family" thing).
+
+Running their server with our client:
+
+#### TCP
+![](https://i.imgur.com/rOGxn5l.png)
+
+
+#### UDP
+![](https://i.imgur.com/4mZD9Nf.png)
+
+
+Running our server with their client:
+
+#### TCP
+
+![](https://i.imgur.com/D9P65TJ.png)
+
+
+#### UDP
+
+![](https://i.imgur.com/NOeWODz.png)
+
+
+Also, running our server with their client throws an exception:
+#### TCP exception
+![](https://i.imgur.com/LTtDNVK.png)
+#### UDP exception
+![](https://i.imgur.com/Njez0wx.png)
+We think this is because their code expect a unicode string as the sent data, whereas we encoded our timestamp as a 4 byte integer.
+
+In this test we get a payload size of 31 bytes (which can be seen in the screenshots from Wireshark) in all four scenarios, but the protocol requires 4 bytes. We tried running the groups own server with their own client to see if they had a payload size of the required 4 bytes, but it seems like they do not:
+
+![](https://i.imgur.com/Lg3CQNL.png)
+
+So the 31 bytes showed in our tests must stem from their implementation. As mentioned before, we think this is because they use a unicode string for their data.
+
+
 
